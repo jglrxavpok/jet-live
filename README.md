@@ -1,6 +1,6 @@
 [Demo](https://www.youtube.com/watch?v=5xfgViYchqg)
 
-[![Build Status](https://travis-ci.com/ddovod/jet-live.svg?branch=master)](https://travis-ci.com/ddovod/jet-live)
+[![Build](https://github.com/ddovod/jet-live/actions/workflows/build.yml/badge.svg)](https://github.com/ddovod/jet-live/actions/workflows/build.yml)
 
 # [jet-live](https://github.com/ddovod/jet-live)
 
