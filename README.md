@@ -1,6 +1,7 @@
 [Demo](https://www.youtube.com/watch?v=5xfgViYchqg)
 
 [![Build](https://github.com/ddovod/jet-live/actions/workflows/build.yml/badge.svg)](https://github.com/ddovod/jet-live/actions/workflows/build.yml)
+[![Test](https://github.com/ddovod/jet-live/actions/workflows/test.yml/badge.svg)](https://github.com/ddovod/jet-live/actions/workflows/test.yml)
 
 # [jet-live](https://github.com/ddovod/jet-live)
 
