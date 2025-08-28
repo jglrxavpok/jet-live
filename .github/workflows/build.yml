@@ -20,8 +20,28 @@ jobs:
         working-directory: build
         run: cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
         env:
-          CC: clang
-          CXX: clang++
+          CC: clang-18
+          CXX: clang++-18
+      - name: make
+        working-directory: build
+        run: make
+
+  ubuntu-gcc:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup env
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-13
+      - name: mkdir
+        run: mkdir build
+      - name: cmake
+        working-directory: build
+        run: cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+        env:
+          CC: gcc-13
+          CXX: g++-13
       - name: make
         working-directory: build
         run: make
