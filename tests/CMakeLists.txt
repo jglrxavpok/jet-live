@@ -17,7 +17,7 @@ target_include_directories(undefined_symbols
   )
 set_target_properties(undefined_symbols
   PROPERTIES
-  CXX_STANDARD 11
+  CXX_STANDARD 17
   )
 
 add_executable(tests "")
@@ -117,7 +117,7 @@ target_link_libraries(tests
   )
 set_target_properties(tests
   PROPERTIES
-  CXX_STANDARD 11
+  CXX_STANDARD 17
   )
 target_compile_options(tests
   PRIVATE

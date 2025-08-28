@@ -91,7 +91,7 @@ target_include_directories(lib_tiny-process-library
   )
 set_target_properties(lib_tiny-process-library
   PROPERTIES
-  CXX_STANDARD 11
+  CXX_STANDARD 17
   )
 
 ########## lib_teenypath
@@ -106,7 +106,7 @@ target_include_directories(lib_teenypath
   )
 set_target_properties(lib_teenypath
   PROPERTIES
-  CXX_STANDARD 11
+  CXX_STANDARD 17
   )
 
 ########## lib_json
@@ -135,7 +135,7 @@ target_include_directories(lib_xxhash
   )
 set_target_properties(lib_xxhash
   PROPERTIES
-  CXX_STANDARD 11
+  CXX_STANDARD 17
   )
 
 if (UNIX AND NOT APPLE)
@@ -220,7 +220,7 @@ if (UNIX AND NOT APPLE)
 endif()
 set_target_properties(jet-live
   PROPERTIES
-  CXX_STANDARD 11
+  CXX_STANDARD 17
   )
 target_compile_options(jet-live
   PRIVATE

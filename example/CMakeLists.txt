@@ -21,7 +21,7 @@ target_link_libraries(example
   )
 set_target_properties(example
   PROPERTIES
-  CXX_STANDARD 11
+  CXX_STANDARD 17
   )
 target_compile_options(example
   PRIVATE
