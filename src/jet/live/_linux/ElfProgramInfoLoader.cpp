@@ -3,8 +3,24 @@
 #include <elfio/elf_types.hpp>
 #include "jet/live/LiveContext.hpp"
 // clang-format off
+
 #include <cstdint>
+#if defined(__clang__)
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wshadow"
+#   pragma clang diagnostic ignored "-Wconversion"
+#elif defined(__GNUC__)
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wshadow"
+#   pragma GCC diagnostic ignored "-Wconversion"
+#endif
 #include <elfio/elfio.hpp>
+#if defined(__clang__)
+#   pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#   pragma GCC diagnostic pop
+#endif
+
 #include <link.h>
 // clang-format on
 #include "jet/live/Utility.hpp"
