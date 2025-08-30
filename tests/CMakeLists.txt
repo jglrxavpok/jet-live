@@ -2,6 +2,20 @@
 cmake_minimum_required(VERSION 3.6)
 project(tests)
 
+add_library(catch2 STATIC "")
+target_sources(catch2
+  PRIVATE
+  ../libs/Catch2/catch_amalgamated.cpp
+  )
+target_include_directories(catch2
+  PUBLIC
+  ../libs/Catch2
+)
+target_compile_definitions(catch2
+  PRIVATE
+  CATCH_AMALGAMATED_CUSTOM_MAIN
+)
+
 add_library(undefined_symbols "")
 target_sources(undefined_symbols
   PRIVATE
@@ -108,12 +122,12 @@ target_sources(tests
 target_include_directories(tests
   PRIVATE
   src
-  ../libs/Catch2
   )
 target_link_libraries(tests
   PRIVATE
   jet-live
   undefined_symbols
+  catch2
   )
 set_target_properties(tests
   PROPERTIES
