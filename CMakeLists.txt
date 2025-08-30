@@ -47,16 +47,12 @@ target_sources(lib_efsw
   libs/efsw/src/efsw/FileWatcherGeneric.cpp
   libs/efsw/src/efsw/FileWatcherImpl.cpp
   libs/efsw/src/efsw/Log.cpp
-  libs/efsw/src/efsw/Mutex.cpp
   libs/efsw/src/efsw/String.cpp
   libs/efsw/src/efsw/System.cpp
-  libs/efsw/src/efsw/Thread.cpp
   libs/efsw/src/efsw/Watcher.cpp
   libs/efsw/src/efsw/WatcherGeneric.cpp
   libs/efsw/src/efsw/platform/posix/FileSystemImpl.cpp
-  libs/efsw/src/efsw/platform/posix/MutexImpl.cpp
   libs/efsw/src/efsw/platform/posix/SystemImpl.cpp
-  libs/efsw/src/efsw/platform/posix/ThreadImpl.cpp
   )
 if (UNIX AND NOT APPLE)
   target_sources(lib_efsw
