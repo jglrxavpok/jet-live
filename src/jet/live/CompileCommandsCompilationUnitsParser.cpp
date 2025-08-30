@@ -214,11 +214,11 @@ namespace jet
         auto xcodeProjectName = xcodeProjectPath.filename();
         auto xcodeProjectDir = xcodeProjectPath.parent_path().string();
 
-        std::string msg = "Generating compile_commands.json for Xcode project";
+        std::string logMsg = "Generating compile_commands.json for Xcode project";
         if (!wait) {
-            msg.append(" async");
+            logMsg.append(" async");
         }
-        context->events->addLog(LogSeverity::kDebug, std::move(msg));
+        context->events->addLog(LogSeverity::kDebug, std::move(logMsg));
 
         // clang-format off
         // A little hack to not "clean" original project
