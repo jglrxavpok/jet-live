@@ -1,6 +1,7 @@
 #include "process.hpp"
 #include <algorithm>
 #include <bitset>
+#include <cassert>
 #include <cstdlib>
 #include <errno.h>
 #include <fcntl.h>
@@ -110,8 +111,10 @@ Process::Process(const std::function<void()> &function,
                  std::function<void(const char *, size_t)> read_stderr,
                  bool open_stdin, const Config &config)
     : closed(true), read_stdout(std::move(read_stdout)), read_stderr(std::move(read_stderr)), open_stdin(open_stdin), config(config) {
-  if(config.flatpak_spawn_host)
-    throw std::invalid_argument("Cannot break out of a flatpak sandbox with this overload.");
+  if(config.flatpak_spawn_host) {
+    assert(false && "Cannot break out of a flatpak sandbox with this overload.");
+    return;
+  }
   open(function);
   async_read();
 }
@@ -452,8 +455,10 @@ void Process::close_fds() noexcept {
 }
 
 bool Process::write(const char *bytes, size_t n) {
-  if(!open_stdin)
-    throw std::invalid_argument("Can't write to an unopened stdin pipe. Please set open_stdin=true when constructing the process.");
+  if(!open_stdin) {
+    assert(false && "Can't write to an unopened stdin pipe. Please set open_stdin=true when constructing the process.");
+    return false;
+  }
 
   std::lock_guard<std::mutex> lock(stdin_mutex);
   if(stdin_fd) {
