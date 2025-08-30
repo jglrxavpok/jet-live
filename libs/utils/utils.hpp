@@ -9,7 +9,8 @@
 #   pragma GCC diagnostic ignored "-Wsign-conversion"
 #endif
 
-#define CHOBO_SMALL_VECTOR_ERROR_HANDLING 0 // CHOBO_SMALL_VECTOR_ERROR_HANDLING_NONE
+#define ITLIB_SMALL_VECTOR_ERROR_HANDLING ITLIB_SMALL_VECTOR_ERROR_HANDLING_NONE
+#include <initializer_list>
 #include "small_vector/small_vector.hpp"
 
 #if defined(__clang__)
@@ -20,5 +21,5 @@
 
 namespace jet
 {
-    using namespace chobo;
+    using namespace itlib;
 }
