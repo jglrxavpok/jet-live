@@ -19,6 +19,40 @@ struct Config {
   /// Set to true to inherit file descriptors from parent process. Default is false.
   /// On Windows: has no effect unless read_stdout==nullptr, read_stderr==nullptr and open_stdin==false.
   bool inherit_file_descriptors = false;
+
+  /// If set, invoked when process stdout is closed.
+  /// This call goes after last call to read_stdout().
+  std::function<void()> on_stdout_close = nullptr;
+  /// If set, invoked when process stderr is closed.
+  /// This call goes after last call to read_stderr().
+  std::function<void()> on_stderr_close = nullptr;
+
+  /// On Windows only: controls how the process is started, mimics STARTUPINFO's wShowWindow.
+  /// See: https://docs.microsoft.com/en-us/windows/desktop/api/processthreadsapi/ns-processthreadsapi-startupinfoa
+  /// and https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-showwindow
+  enum class ShowWindow {
+    hide = 0,
+    show_normal = 1,
+    show_minimized = 2,
+    maximize = 3,
+    show_maximized = 3,
+    show_no_activate = 4,
+    show = 5,
+    minimize = 6,
+    show_min_no_active = 7,
+    show_na = 8,
+    restore = 9,
+    show_default = 10,
+    force_minimize = 11
+  };
+  /// On Windows only: controls how the window is shown.
+  ShowWindow show_window{ShowWindow::show_default};
+
+  /// Set to true to break out of flatpak sandbox by prepending all commands with `/usr/bin/flatpak-spawn --host`
+  /// which will execute the command line on the host system.
+  /// Requires the flatpak `org.freedesktop.Flatpak` portal to be opened for the current sandbox.
+  /// See https://docs.flatpak.org/en/latest/flatpak-command-reference.html#flatpak-spawn.
+  bool flatpak_spawn_host = false;
 };
 
 /// Platform independent class for creating processes.
@@ -48,10 +82,9 @@ private:
     Data() noexcept;
     id_type id;
 #ifdef _WIN32
-    void *handle;
-#else
-    int exit_status{-1};
+    void *handle{nullptr};
 #endif
+    int exit_status{-1};
   };
 
 public:
@@ -83,15 +116,17 @@ public:
           std::function<void(const char *bytes, size_t n)> read_stdout = nullptr,
           std::function<void(const char *bytes, size_t n)> read_stderr = nullptr,
           bool open_stdin = false,
-          const Config &config = {}) noexcept; /// Starts a process with specified environment.
+          const Config &config = {}) noexcept;
 #ifndef _WIN32
   /// Starts a process with the environment of the calling process.
   /// Supported on Unix-like systems only.
+  /// Since the command line is not known to the Process object itself,
+  /// this overload does not support the flatpak_spawn_host configuration.
   Process(const std::function<void()> &function,
           std::function<void(const char *bytes, size_t n)> read_stdout = nullptr,
           std::function<void(const char *bytes, size_t n)> read_stderr = nullptr,
           bool open_stdin = false,
-          const Config &config = {}) noexcept;
+          const Config &config = {});
 #endif
   ~Process() noexcept;
 
@@ -104,7 +139,7 @@ public:
   /// Write to stdin.
   bool write(const char *bytes, size_t n);
   /// Write to stdin. Convenience function using write(const char *, size_t).
-  bool write(const std::string &data);
+  bool write(const std::string &str);
   /// Close stdin. If the process takes parameters from stdin, use this to notify that all parameters have been sent.
   void close_stdin() noexcept;
 
@@ -112,6 +147,10 @@ public:
   void kill(bool force = false) noexcept;
   /// Kill a given process id. Use kill(bool force) instead if possible. force=true is only supported on Unix-like systems.
   static void kill(id_type id, bool force = false) noexcept;
+#ifndef _WIN32
+  /// Send the signal signum to the process.
+  void signal(int signum) noexcept;
+#endif
 
 private:
   Data data;
