@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 import argparse
 import subprocess
@@ -37,7 +37,8 @@ def processCommand(cmdStr):
             commentStr = "//"
             if isCmakeLists:
                 commentStr = "#"
-            lines = open(filepath, "r").readlines()
+            with open(filepath, "r", encoding='utf-8') as f:
+                lines = f.readlines()
             newFileLines = []
             fileWasModified = False
             for line in lines:
@@ -67,14 +68,14 @@ def processCommand(cmdStr):
                     newFileLines.append(line)
             if fileWasModified:
                 print("RUNNER: Patching source file: " + filepath)
-                with open(filepath, "w") as f:
+                with open(filepath, "w", encoding='utf-8') as f:
                     for line in newFileLines:
                         f.write(line)
 
     if cmakeFileWasModified:
         print("RUNNER: Running cmake")
         cmd = "cmake -DCMAKE_BUILD_TYPE=Debug -DJET_LIVE_BUILD_TESTS=ON .."
-        subprocess.Popen(cmd.split(" "), cwd=buildDir).wait()
+        subprocess.Popen(cmd, cwd=buildDir, shell=True).wait()
 
 
 parser = argparse.ArgumentParser()
@@ -92,10 +93,11 @@ sourceDir = os.path.realpath(os.path.expanduser(args.source_directory))
 buildDir = os.path.realpath(os.path.expanduser(args.build_directory))
 
 testCmd = [os.path.join(args.binary_directory, "tests"),
-           "--use-colour=yes"]
+           ""]
 print("RUNNER: Running '" + " ".join(testCmd) + "'")
-proc = subprocess.Popen(testCmd, shell=True,
-                        stdout=subprocess.PIPE)
+proc = subprocess.Popen(testCmd,
+                        stdout=subprocess.PIPE,
+                        universal_newlines=True)
 
 while proc.poll() is None:
     output = proc.stdout.readline()
