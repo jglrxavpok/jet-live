@@ -18,7 +18,7 @@ jobs:
         run: mkdir build
       - name: cmake
         working-directory: build
-        run: cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DJET_LIVE_BUILD_TESTS=ON ..
+        run: cmake -DCMAKE_BUILD_TYPE=Debug -DJET_LIVE_BUILD_TESTS=ON ..
         env:
           CC: clang-18
           CXX: clang++-18
@@ -41,7 +41,7 @@ jobs:
         run: mkdir build
       - name: cmake
         working-directory: build
-        run: cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DJET_LIVE_BUILD_TESTS=ON ..
+        run: cmake -DCMAKE_BUILD_TYPE=Debug -DJET_LIVE_BUILD_TESTS=ON ..
         env:
           CC: gcc-13
           CXX: g++-13
@@ -51,3 +51,38 @@ jobs:
       - name: test
         working-directory: build
         run: ../tools/tests/test_runner.py -b . -d tests -s ../tests
+
+  macos-make:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: mkdir
+        run: mkdir build
+      - name: cmake
+        working-directory: build
+        run: cmake -DCMAKE_BUILD_TYPE=Debug -DJET_LIVE_BUILD_TESTS=ON ..
+      - name: make
+        working-directory: build
+        run: make
+      - name: test
+        working-directory: build
+        run: ../tools/tests/test_runner.py -b . -d tests -s ../tests
+
+  macos-xcodebuild:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup env
+        run: |
+          gem install xcpretty
+      - name: mkdir
+        run: mkdir build
+      - name: cmake
+        working-directory: build
+        run: cmake -DCMAKE_BUILD_TYPE=Debug -DJET_LIVE_BUILD_TESTS=ON -G Xcode ..
+      - name: xcodebuild
+        working-directory: build
+        run: xcodebuild -alltargets -quiet
+      - name: test
+        working-directory: build
+        run: ../tools/tests/test_runner.py -b . -d tests/Debug -s ../tests
