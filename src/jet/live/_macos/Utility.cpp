@@ -4,7 +4,11 @@
 #include <process.hpp>
 #include <sstream>
 #include <unistd.h>
+#ifdef __arm__
+#include <mach-o/arm64/reloc.h>
+#else
 #include <mach-o/x86_64/reloc.h>
+#endif
 
 namespace jet
 {
@@ -65,6 +69,20 @@ namespace jet
     std::string relToString(uint32_t relocType)
     {
         switch (relocType) {
+#ifdef __arm__
+            case ARM64_RELOC_UNSIGNED: return "ARM64_RELOC_UNSIGNED";
+            case ARM64_RELOC_SUBTRACTOR: return "ARM64_RELOC_SUBTRACTOR";
+            case ARM64_RELOC_BRANCH26: return "ARM64_RELOC_BRANCH26";
+            case ARM64_RELOC_PAGE21: return "ARM64_RELOC_PAGE21";
+            case ARM64_RELOC_PAGEOFF12: return "ARM64_RELOC_PAGEOFF12";
+            case ARM64_RELOC_GOT_LOAD_PAGE21: return "ARM64_RELOC_GOT_LOAD_PAGE21";
+            case ARM64_RELOC_GOT_LOAD_PAGEOFF12: return "ARM64_RELOC_GOT_LOAD_PAGEOFF12";
+            case ARM64_RELOC_POINTER_TO_GOT: return "ARM64_RELOC_POINTER_TO_GOT";
+            case ARM64_RELOC_TLVP_LOAD_PAGE21: return "ARM64_RELOC_TLVP_LOAD_PAGE21";
+            case ARM64_RELOC_TLVP_LOAD_PAGEOFF12: return "ARM64_RELOC_TLVP_LOAD_PAGEOFF12";
+            case ARM64_RELOC_ADDEND: return "ARM64_RELOC_ADDEND";
+            case ARM64_RELOC_AUTHENTICATED_POINTER: return "ARM64_RELOC_AUTHENTICATED_POINTER";
+#else
             case X86_64_RELOC_SIGNED: return "X86_64_RELOC_SIGNED";
             case X86_64_RELOC_SIGNED_1: return "X86_64_RELOC_SIGNED_1";
             case X86_64_RELOC_SIGNED_2: return "X86_64_RELOC_SIGNED_2";
@@ -75,6 +93,7 @@ namespace jet
             case X86_64_RELOC_GOT: return "X86_64_RELOC_GOT";
             case X86_64_RELOC_SUBTRACTOR: return "X86_64_RELOC_SUBTRACTOR";
             case X86_64_RELOC_TLV: return "X86_64_RELOC_TLV";
+#endif
             default: return "UNKNOWN";
         }
     }

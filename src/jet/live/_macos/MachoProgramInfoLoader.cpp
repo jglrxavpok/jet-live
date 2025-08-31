@@ -9,7 +9,11 @@
 #include <mach-o/nlist.h>
 #include <mach-o/reloc.h>
 #include <mach-o/stab.h>
+#ifdef __arm__
+#include <mach-o/arm64/reloc.h>
+#else
 #include <mach-o/x86_64/reloc.h>
+#endif
 #include "jet/live/LiveContext.hpp"
 #include "jet/live/Utility.hpp"
 
@@ -569,6 +573,23 @@ namespace jet
                                 }
 
                                 switch (reloc.r_type) {
+#ifdef __arm__
+                                    case ARM64_RELOC_UNSIGNED:              // For pointer sized fixups
+                                    case ARM64_RELOC_SUBTRACTOR:            // must be followed by a ARM64_RELOC_UNSIGNED
+                                    case ARM64_RELOC_BRANCH26:              // a BL instruction with pc-relative +-128MB displacement
+                                    case ARM64_RELOC_PAGE21:                // pc-rel distance to page of target
+                                    case ARM64_RELOC_PAGEOFF12:             // offset within page, scaled by r_length
+                                    case ARM64_RELOC_GOT_LOAD_PAGE21:       // load with a pc-rel distance to page of a GOT entry
+                                    case ARM64_RELOC_GOT_LOAD_PAGEOFF12:    // load with an offset within page, scaled by r_length, of GOT entry
+                                    case ARM64_RELOC_POINTER_TO_GOT:        // 32-bit pc-rel (or 64-bit absolute) offset to a GOT entry
+                                    case ARM64_RELOC_TLVP_LOAD_PAGE21:      // tlv load with a pc-rel distance to page of a GOT entry
+                                    case ARM64_RELOC_TLVP_LOAD_PAGEOFF12:   // tlv load with an offset within page, scaled by r_length, of GOT entry
+                                    case ARM64_RELOC_ADDEND:                // must be followed by ARM64_RELOC_BRANCH26/ARM64_RELOC_PAGE21/ARM64_RELOC_PAGEOFF12
+                                    case ARM64_RELOC_AUTHENTICATED_POINTER: // 64-bit pointer with authentication
+                                        context->events->addLog(LogSeverity::kError,
+                                            "Unsupported relocation type: " + relToString(reloc.r_type));
+                                        continue;
+#else
                                     case X86_64_RELOC_SIGNED:    // for signed 32-bit displacement
                                     case X86_64_RELOC_SIGNED_1:  // for signed 32-bit displacement with a -1 addend
                                     case X86_64_RELOC_SIGNED_2:  // for signed 32-bit displacement with a -2 addend
@@ -586,6 +607,7 @@ namespace jet
                                         context->events->addLog(LogSeverity::kError,
                                             "Unsupported relocation type: " + relToString(reloc.r_type));
                                         continue;
+#endif
                                     default:
                                         context->events->addLog(LogSeverity::kError,
                                             "Unknown relocation type: " + std::to_string(reloc.r_type));
