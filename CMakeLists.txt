@@ -128,17 +128,17 @@ elseif(UNIX AND APPLE)
     libs/dobby/source/Backend/UserMode/ExecMemory/code-patch-tool-darwin.cc
     libs/dobby/source/Backend/UserMode/ExecMemory/clear-cache-tool-all.c
 
-    libs/dobby/builtin-plugins/SybmolResolver/macho/macho_ctx.cc
-    libs/dobby/builtin-plugins/SybmolResolver/macho/shared_cache_ctx.cpp
-    libs/dobby/builtin-plugins/SybmolResolver/macho/dobby_symbol_resolver.cc
-    libs/dobby/builtin-plugins/SybmolResolver/macho/macho_file_symbol_resolver.cpp
-    libs/dobby/builtin-plugins/SybmolResolver/macho/shared_cache_ctx.cpp
+    libs/dobby/builtin-plugin/SybmolResolver/macho/macho_ctx.cc
+    libs/dobby/builtin-plugin/SybmolResolver/macho/shared_cache_ctx.cpp
+    libs/dobby/builtin-plugin/SybmolResolver/macho/dobby_symbol_resolver.cc
+    libs/dobby/builtin-plugin/SybmolResolver/macho/macho_file_symbol_resolver.cpp
+    libs/dobby/builtin-plugin/SybmolResolver/macho/shared_cache_ctx.cpp
   )
   target_include_directories(lib_dobby
     PUBLIC
     libs/dobby/source/Backend/UserMode
 
-    libs/dobby/builtin-plugins/SybmolResolver
+    libs/dobby/builtin-plugin/SybmolResolver
   )
 endif()
 
