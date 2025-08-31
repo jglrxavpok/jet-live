@@ -1,6 +1,8 @@
 
 #include "FunctionsHookingStep.hpp"
-#include <subhook.h>
+#include <cstdint>
+#include <memory>
+#include <dobby.h>
 #include "jet/live/LiveContext.hpp"
 #include "jet/live/Utility.hpp"
 
@@ -27,10 +29,9 @@ namespace jet
                 }
 
                 auto newFuncPtr = reinterpret_cast<void*>(sym.runtimeAddress);
-                auto hook = subhook_new(oldFuncPtr, newFuncPtr, SUBHOOK_64BIT_OFFSET);
-                if (auto subhookStatus = subhook_install(hook)) {
+                if (auto dobbyStatus = DobbyHook(oldFuncPtr, newFuncPtr, nullptr); dobbyStatus != 0) {
                     context->events->addLog(LogSeverity::kError,
-                        "Cannot hook function: " + sym.name + ", status " + std::to_string(subhookStatus));
+                        "Cannot hook function: " + sym.name + ", status " + std::to_string(dobbyStatus));
                 } else {
                     hookedFunctions++;
                 }

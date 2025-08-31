@@ -10,16 +10,130 @@ if (NOT JET_LIVE_CONFIGURED)
   include(cmake/jet_live_setup.cmake)
 endif()
 
-########## lib_subhook
-add_library(lib_subhook STATIC "")
-target_sources(lib_subhook
+########## lib_dobby
+add_library(lib_dobby STATIC "")
+target_sources(lib_dobby
   PRIVATE
-  libs/subhook/subhook.c
-  )
-target_include_directories(lib_subhook
+
+  # cpu
+
+  # assembler
+  libs/dobby/source/core/assembler/assembler-arm.cc
+  libs/dobby/source/core/assembler/assembler-ia32.cc
+  libs/dobby/source/core/assembler/assembler-x64.cc
+
+  # codegen
+  libs/dobby/source/core/codegen/codegen-arm.cc
+  libs/dobby/source/core/codegen/codegen-ia32.cc
+
+  # memory kit
+
+  # instruction relocation
+  libs/dobby/source/InstructionRelocation/arm/InstructionRelocationARM.cc
+  libs/dobby/source/InstructionRelocation/arm64/InstructionRelocationARM64.cc
+  libs/dobby/source/InstructionRelocation/x86/InstructionRelocationX86.cc
+  libs/dobby/source/InstructionRelocation/x86/InstructionRelocationX86Shared.cc
+  libs/dobby/source/InstructionRelocation/x64/InstructionRelocationX64.cc
+  libs/dobby/source/InstructionRelocation/x86/x86_insn_decode/x86_insn_decode.c
+
+  # intercept routing
+  libs/dobby/source/InterceptRouting/InterceptRouting.h
+  libs/dobby/source/InterceptRouting/InlineHookRouting.h
+  libs/dobby/source/InterceptRouting/InstrumentRouting.h
+  libs/dobby/source/InterceptRouting/RoutingPlugin.h
+  libs/dobby/source/InterceptRouting/InstrumentRouting/instrument_routing_handler.cpp
+  libs/dobby/source/InterceptRouting/NearBranchTrampoline/NearBranchTrampoline.h
+
+  # intercept routing trampoline
+  libs/dobby/source/TrampolineBridge/Trampoline/trampoline_arm.cc
+  libs/dobby/source/TrampolineBridge/Trampoline/trampoline_arm64.cc
+  libs/dobby/source/TrampolineBridge/Trampoline/trampoline_x86.cc
+  libs/dobby/source/TrampolineBridge/Trampoline/trampoline_x64.cc
+
+  # closure trampoline bridge - arm
+  libs/dobby/source/TrampolineBridge/ClosureTrampolineBridge/arm/helper_arm.cc
+  libs/dobby/source/TrampolineBridge/ClosureTrampolineBridge/arm/closure_bridge_arm.cc
+  libs/dobby/source/TrampolineBridge/ClosureTrampolineBridge/arm/ClosureTrampolineARM.cc
+  # closure trampoline bridge - arm64
+  libs/dobby/source/TrampolineBridge/ClosureTrampolineBridge/arm64/helper_arm64.cc
+  libs/dobby/source/TrampolineBridge/ClosureTrampolineBridge/arm64/closure_bridge_arm64.cc
+  libs/dobby/source/TrampolineBridge/ClosureTrampolineBridge/arm64/ClosureTrampolineARM64.cc
+  libs/dobby/source/TrampolineBridge/ClosureTrampolineBridge/arm64/closure_bridge_arm64.asm
+  libs/dobby/source/TrampolineBridge/ClosureTrampolineBridge/arm64/closure_trampoline_arm64.asm
+  # closure trampoline bridge - x86
+  libs/dobby/source/TrampolineBridge/ClosureTrampolineBridge/x86/helper_x86.cc
+  libs/dobby/source/TrampolineBridge/ClosureTrampolineBridge/x86/closure_bridge_x86.cc
+  libs/dobby/source/TrampolineBridge/ClosureTrampolineBridge/x86/ClosureTrampolineX86.cc
+  # closure trampoline bridge - x64
+  libs/dobby/source/TrampolineBridge/ClosureTrampolineBridge/x64/helper_x64.cc
+  libs/dobby/source/TrampolineBridge/ClosureTrampolineBridge/x64/closure_bridge_x64.cc
+  libs/dobby/source/TrampolineBridge/ClosureTrampolineBridge/x64/ClosureTrampolineX64.cc
+  libs/dobby/source/TrampolineBridge/ClosureTrampolineBridge/x64/closure_bridge_x64.asm
+  libs/dobby/source/TrampolineBridge/ClosureTrampolineBridge/x64/closure_trampoline_x64.asm
+
+  # plugin register
+
+  # main
+  libs/dobby/source/dobby.cpp
+
+  # misc
+  libs/dobby/source/InterceptRouting/NearBranchTrampoline/near_trampoline_arm64.cc
+  libs/dobby/source/Backend/UserMode/UnifiedInterface/platform-posix.cc
+)
+target_include_directories(lib_dobby
   PUBLIC
-  libs/subhook
+  libs/dobby
+  libs/dobby/include
+  libs/dobby/source
+  libs/dobby/source/dobby
+  libs/dobby/external
+  libs/dobby/external/logging
+  # libs/dobby/builtin-plugin
+)
+target_compile_definitions(lib_dobby
+  PRIVATE
+  # DOBBY_DEBUG
+  DOBBY_LOGGING_DISABLE
+  # FULL_FLOATING_POINT_REGISTER_PACK
+  BUILD_WITH_TRAMPOLINE_ASM
+)
+target_compile_options(lib_dobby
+  PRIVATE
+  -Wno-attributes
+)
+enable_language(ASM)
+if (PROCESSOR.AARCH64)
+  set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -arch arm64 -x assembler-with-cpp")
+else()
+  set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -x assembler-with-cpp")
+endif ()
+if(UNIX AND NOT APPLE)
+  target_sources(lib_dobby
+    PRIVATE
+    libs/dobby/source/Backend/UserMode/PlatformUtil/Linux/ProcessRuntime.cc
+
+    libs/dobby/source/Backend/UserMode/UnifiedInterface/platform-posix.cc
+
+    libs/dobby/source/Backend/UserMode/ExecMemory/code-patch-tool-posix.cc
+    libs/dobby/source/Backend/UserMode/ExecMemory/clear-cache-tool-all.c
   )
+  target_link_libraries(lib_dobby dl)
+elseif(UNIX AND APPLE)
+  target_sources(lib_dobby
+    PRIVATE
+    libs/dobby/source/Backend/UserMode/PlatformUtil/Darwin/ProcessRuntime.cc
+
+    libs/dobby/source/Backend/UserMode/UnifiedInterface/platform-posix.cc
+
+    libs/dobby/source/Backend/UserMode/ExecMemory/code-patch-tool-darwin.cc
+    libs/dobby/source/Backend/UserMode/ExecMemory/clear-cache-tool-all.c
+  )
+  target_include_directories(lib_dobby
+    PUBLIC
+    libs/dobby/source/Backend/UserMode
+  )
+endif()
+# SymbolResolver is disabled
 
 ########## lib_whereami
 add_library(lib_whereami STATIC "")
@@ -147,7 +261,7 @@ endif()
 if (JET_LIVE_SHARED)
   add_library(jet-live SHARED "")
   target_compile_options(jet-live PRIVATE $<$<COMPILE_LANGUAGE:C>:-fPIC> $<$<COMPILE_LANGUAGE:CXX>:-fPIC>)
-  target_compile_options(lib_subhook PRIVATE $<$<COMPILE_LANGUAGE:C>:-fPIC> $<$<COMPILE_LANGUAGE:CXX>:-fPIC>)
+  target_compile_options(lib_dobby PRIVATE $<$<COMPILE_LANGUAGE:C>:-fPIC> $<$<COMPILE_LANGUAGE:CXX>:-fPIC>)
   target_compile_options(lib_whereami PRIVATE $<$<COMPILE_LANGUAGE:C>:-fPIC> $<$<COMPILE_LANGUAGE:CXX>:-fPIC>)
   target_compile_options(lib_efsw PRIVATE $<$<COMPILE_LANGUAGE:C>:-fPIC> $<$<COMPILE_LANGUAGE:CXX>:-fPIC>)
   target_compile_options(lib_tiny-process-library PRIVATE $<$<COMPILE_LANGUAGE:C>:-fPIC> $<$<COMPILE_LANGUAGE:CXX>:-fPIC>)
@@ -194,7 +308,7 @@ target_include_directories(jet-live
 find_package(Threads REQUIRED)
 target_link_libraries(jet-live
   PRIVATE
-  lib_subhook
+  lib_dobby
   lib_whereami
   lib_teenypath
   lib_json
