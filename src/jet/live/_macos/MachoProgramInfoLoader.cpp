@@ -9,7 +9,7 @@
 #include <mach-o/nlist.h>
 #include <mach-o/reloc.h>
 #include <mach-o/stab.h>
-#ifdef __arm__
+#ifdef __aarch64__
 #include <mach-o/arm64/reloc.h>
 #else
 #include <mach-o/x86_64/reloc.h>
