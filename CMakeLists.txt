@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.20)
 project(jet-live)
 
 option(JET_LIVE_SHARED "Compile as shared library. ON - shared, OFF - static." OFF)
