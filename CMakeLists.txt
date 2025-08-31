@@ -305,7 +305,11 @@ elseif (UNIX AND APPLE)
     PRIVATE
     src/jet/live/_macos/MachoProgramInfoLoader.cpp
     src/jet/live/_macos/Utility.cpp
-    )
+  )
+  target_compile_definitions(jet-live
+    PRIVATE
+    JET_LIVE_OSX_SYSROOT="${JET_LIVE_OSX_SYSROOT}"
+  )
 endif()
 target_include_directories(jet-live
   PUBLIC

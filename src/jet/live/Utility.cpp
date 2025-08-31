@@ -183,9 +183,11 @@ namespace jet
                     .append(" -Wl,-install_name,")
                     .append(libName)
                     .append(" -Wl,-flat_namespace")
-                    .append(" -Wl,-rename_section,__TEXT,__text,__JET_TEXT,__text")
-                    .append(" -Wl,-segprot,__JET_TEXT,rwx,rwx")
-                    .append(" -undefined dynamic_lookup");
+                    .append(" -undefined dynamic_lookup")
+#ifdef __APPLE__
+                    .append(" -isysroot " JET_LIVE_OSX_SYSROOT)
+#endif
+                    ;
                 break;
             }
             case LinkerType::kUnknown: {

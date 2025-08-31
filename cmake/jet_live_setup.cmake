@@ -36,7 +36,13 @@ endif()
 if (UNIX AND NOT APPLE)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-export-dynamic ")
 elseif (UNIX AND APPLE)
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-export_dynamic -Wl,-flat_namespace -Wl,-rename_section,__TEXT,__text,__JET_TEXT,__text -Wl,-segprot,__JET_TEXT,rwx,rwx ")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-export_dynamic -Wl,-flat_namespace ")
+  execute_process(
+    COMMAND xcrun --sdk macosx --show-sdk-path
+    OUTPUT_VARIABLE JET_LIVE_OSX_SYSROOT
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+endif()
 else()
   message(FATAL_ERROR "Platform is not supported")
 endif()
