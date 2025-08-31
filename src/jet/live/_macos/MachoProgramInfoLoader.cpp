@@ -568,7 +568,7 @@ namespace jet
                                 }
 
                                 if (!reloc.r_pcrel) {
-                                    context->events->addLog(LogSeverity::kDebug, "reloc.r_pcrel == 0");
+                                    context->events->addLog(LogSeverity::kDebug, "reloc.r_pcrel == 0, reloc.r_type == " + relToString(reloc.r_type));
                                     continue;
                                 }
 
