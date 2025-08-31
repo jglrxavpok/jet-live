@@ -42,7 +42,6 @@ elseif (UNIX AND APPLE)
     OUTPUT_VARIABLE JET_LIVE_OSX_SYSROOT
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
-endif()
 else()
   message(FATAL_ERROR "Platform is not supported")
 endif()
