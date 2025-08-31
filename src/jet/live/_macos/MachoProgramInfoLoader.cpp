@@ -573,7 +573,7 @@ namespace jet
                                 }
 
                                 switch (reloc.r_type) {
-#ifdef __arm__
+#ifdef __aarch64__
                                     case ARM64_RELOC_UNSIGNED:              // For pointer sized fixups
                                     case ARM64_RELOC_SUBTRACTOR:            // must be followed by a ARM64_RELOC_UNSIGNED
                                     case ARM64_RELOC_BRANCH26:              // a BL instruction with pc-relative +-128MB displacement

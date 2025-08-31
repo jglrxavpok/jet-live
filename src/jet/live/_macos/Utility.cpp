@@ -69,7 +69,7 @@ namespace jet
     std::string relToString(uint32_t relocType)
     {
         switch (relocType) {
-#ifdef __arm__
+#ifdef __aarch64__
             case ARM64_RELOC_UNSIGNED: return "ARM64_RELOC_UNSIGNED";
             case ARM64_RELOC_SUBTRACTOR: return "ARM64_RELOC_SUBTRACTOR";
             case ARM64_RELOC_BRANCH26: return "ARM64_RELOC_BRANCH26";
