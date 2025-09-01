@@ -6,6 +6,17 @@
 #include <teenypath.h>
 #include "jet/live/LiveContext.hpp"
 
+namespace
+{
+    bool endsWith(const std::string& value, const std::string& ending)
+    {
+        if (ending.size() > value.size()) {
+            return false;
+        }
+        return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+    }
+}
+
 namespace jet
 {
     std::unordered_set<std::string> DepfileDependenciesHandler::getDependencies(const LiveContext* context,
@@ -31,7 +42,10 @@ namespace jet
         }
 
         if (cu.depFilePath.empty()) {
-            context->events->addLog(LogSeverity::kWarning, "Empty depfile path for cu: " + cu.sourceFilePath);
+            // asm files don't have deps and it's okay
+            if (!::endsWith(cu.sourceFilePath, ".asm")) {
+                context->events->addLog(LogSeverity::kWarning, "Empty depfile path for cu: " + cu.sourceFilePath);
+            }
             return deps;
         }
 

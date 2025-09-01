@@ -31,6 +31,12 @@
 namespace
 {
     uintptr_t thisExecutableLoadAddress = 0;
+
+    bool isSystemImage(const std::string& imagePathStr)
+    {
+        return imagePathStr.find("/usr/lib") != std::string::npos ||
+            imagePathStr.find("/System/Library") != std::string::npos;
+    }
 }
 
 namespace jet
@@ -41,6 +47,10 @@ namespace jet
 
         for (uint32_t i = 0; i < _dyld_image_count(); i++) {
             auto imagePath = TeenyPath::path{_dyld_get_image_name(i)};
+            // Skipping system images as they're not available anyway
+            if (::isSystemImage(imagePath.string())) {
+                continue;
+            }
             if (imagePath.exists()) {
                 imagePath = imagePath.resolve_absolute();
                 if (imagePath.string() == context->thisExecutablePath) {
@@ -66,6 +76,10 @@ namespace jet
         std::string realFilepath = filepath.empty() ? context->thisExecutablePath : filepath;
         for (uint32_t i = 0; i < _dyld_image_count(); i++) {
             auto imagePath = TeenyPath::path{_dyld_get_image_name(i)};
+            // Skipping system images as they're not available anyway
+            if (::isSystemImage(imagePath.string())) {
+                continue;
+            }
             if (imagePath.exists()) {
                 imagePath = imagePath.resolve_absolute();
                 if (imagePath.string() == realFilepath) {
