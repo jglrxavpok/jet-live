@@ -2,6 +2,7 @@
 #include "LinkTimeRelocationsStep.hpp"
 #include <cstdint>
 #include <limits>
+#include <dobby.h>
 #include "jet/live/DataTypes.hpp"
 #include "jet/live/LiveContext.hpp"
 #include "jet/live/Utility.hpp"
@@ -46,7 +47,7 @@ namespace jet
                 continue;
             }
 
-            auto relocAddressVal = targetSymbol->runtimeAddress + reloc.relocationOffsetRelativeTargetSymbolAddress;
+            auto relocAddress = targetSymbol->runtimeAddress + reloc.relocationOffsetRelativeTargetSymbolAddress;
             auto distance = std::abs(static_cast<intptr_t>(oldVar->runtimeAddress - relocSymbol->runtimeAddress));
             int64_t maxAllowedDistance = 0;
             if (reloc.size == sizeof(int32_t)) {
@@ -64,17 +65,22 @@ namespace jet
                 continue;
             }
 
-            auto relocAddress = reinterpret_cast<void*>(relocAddressVal);
-            if (!unprotect(relocAddress, reloc.size)) {
-                context->events->addLog(LogSeverity::kError, "'unprotect' failed");
-                continue;
+            auto relocAddressPtr = reinterpret_cast<void*>(relocAddress);
             }
             if (reloc.size == sizeof(int32_t)) {
-                *reinterpret_cast<int32_t*>(relocAddress) +=
+                int32_t buf = *reinterpret_cast<int32_t*>(relocAddressPtr) +
                     static_cast<int32_t>(oldVar->runtimeAddress) - static_cast<int32_t>(relocSymbol->runtimeAddress);
+                if (DobbyCodePatch(relocAddressPtr, reinterpret_cast<uint8_t*>(&buf), sizeof(buf)) != 0) {
+                    context->events->addLog(LogSeverity::kError, "relocation code patch failed");
+                    continue;
+                }
             } else if (reloc.size == sizeof(int64_t)) {
-                *reinterpret_cast<int64_t*>(relocAddress) +=
+                int64_t buf = *reinterpret_cast<int64_t*>(relocAddressPtr) +
                     static_cast<int32_t>(oldVar->runtimeAddress) - static_cast<int32_t>(relocSymbol->runtimeAddress);
+                if (DobbyCodePatch(relocAddressPtr, reinterpret_cast<uint8_t*>(&buf), sizeof(buf)) != 0) {
+                    context->events->addLog(LogSeverity::kError, "relocation code patch failed");
+                    continue;
+                }
             }
             context->events->addLog(LogSeverity::kDebug, relocSymbol->name + " was relocated");
 
