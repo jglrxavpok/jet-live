@@ -377,6 +377,7 @@ namespace jet
             std::vector<std::string> removedCompilationUnits;
             auto changed = m_context->compilationUnitsParser->updateCompilationUnits(
                 m_context.get(), filepath, &addedCompilationUnits, &modifiedCompilationUnits, &removedCompilationUnits);
+            m_context->dirFilters = getDirectoryFilters();
 
             if (changed) {
                 // Compiling all new and modified CUs

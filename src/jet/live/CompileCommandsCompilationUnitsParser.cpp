@@ -80,6 +80,13 @@ namespace jet
             }
         }
 
+        for (auto& newCu : newCompilationUnits) {
+            auto oldCuFound = oldCompilationUnits.find(newCu.first);
+            if (oldCuFound != oldCompilationUnits.end() && !oldCuFound->second.depFilePath.empty()) {
+                newCu.second.depFilePath = oldCuFound->second.depFilePath;
+            }
+        }
+
         context->compilationUnits = newCompilationUnits;
 
         context->events->addLog(LogSeverity::kInfo,
