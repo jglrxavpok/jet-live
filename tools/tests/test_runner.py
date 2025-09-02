@@ -116,7 +116,8 @@ while proc.poll() is None:
         else:
             print(output)
 
-for cmdStr in revertCommands.reverse():
+revertCommands.reverse()
+for cmdStr in revertCommands:
     processCommand(cmdStr)
 
 exit(proc.poll())
