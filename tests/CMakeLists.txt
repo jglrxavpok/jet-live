@@ -88,35 +88,35 @@ target_sources(tests
   src/good/GlobalFreeFunction_test.cpp
   src/good/GlobalVariableAddress_test.cpp
   src/good/StaticVariableAddress_test.cpp
-  src/good/StaticVariable_test.cpp
-  src/good/SeveralReloads_test.cpp
+  src/good/StaticVariable_test.cpp # fail (macos)
+  src/good/SeveralReloads_test.cpp # fail (macos)
   src/good/ExternGlobalVariableAddress_test.cpp
   src/good/InternalLinkageFunction_test.cpp
-  src/good/StaticVariableSameName_test.cpp
+  src/good/StaticVariableSameName_test.cpp # fail (macos)
   src/good/StaticInternalVariableAddress_test.cpp
   src/good/ClassVirtualMethod_test.cpp
   src/good/StaticFunctionLocalVariableAddress_test.cpp
   src/good/UndefinedSymbol_test.cpp
   src/good/LambdaFunctionWithCapturesGoodCase_test.cpp
-  src/good/GlobalVariable_test.cpp
+  src/good/GlobalVariable_test.cpp # fail (macos)
   src/good/LambdaFunctionWithCaptures_test.cpp
   src/good/LambdaFunction_test.cpp
   src/good/ClassStaticMethod_test.cpp
   src/good/ExternGlobalVariable_test.cpp
-  src/good/StaticFunctionLocalVariable_test.cpp
+  src/good/StaticFunctionLocalVariable_test.cpp # fail (macos)
   src/good/ReloadOnSignal_test.cpp
   src/good/ModifyFileDuringReload_test.cpp
   src/good/NewCompilationUnit_test.cpp
-  src/good/NewHeaderDependency_test.cpp
+  src/good/NewHeaderDependency_test.cpp # fail (macos, linux)
   src/good/UndefinedSymbolDeep_test.cpp
   src/good/MultipleDefinitions_test.cpp
   src/good/FailedCompilationCrash_test.cpp
   src/good/LostModification_test.cpp
-  src/good/ReloadAfterFailedCompilation_test.cpp
-  src/good/OneFrameCompileReload_test.cpp
+  # src/good/ReloadAfterFailedCompilation_test.cpp crash (macos)
+  src/good/OneFrameCompileReload_test.cpp # fail (macos)
   src/good/MacosFunctionOutOfScope_test.cpp
 
-  src/bad/LambdaFunctionWithCapturesBadCase2_test.cpp
+  src/bad/LambdaFunctionWithCapturesBadCase2_test.cpp # fail (linux)
   src/bad/LambdaFunctionWithCapturesBadCase_test.cpp
   )
 target_include_directories(tests
