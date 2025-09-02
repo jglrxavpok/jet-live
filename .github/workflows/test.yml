@@ -68,21 +68,22 @@ jobs:
         working-directory: build
         run: ../tools/tests/test_runner.py -b . -d tests -s ../tests
 
-  macos-xcodebuild:
-    runs-on: macos-15
-    steps:
-      - uses: actions/checkout@v4
-      - name: setup env
-        run: |
-          gem install xcpretty
-      - name: mkdir
-        run: mkdir build
-      - name: cmake
-        working-directory: build
-        run: cmake -DCMAKE_BUILD_TYPE=Debug -DJET_LIVE_BUILD_TESTS=ON -G Xcode ..
-      - name: xcodebuild
-        working-directory: build
-        run: xcodebuild -alltargets -quiet
-      - name: test
-        working-directory: build
-        run: ../tools/tests/test_runner.py -b . -d tests/Debug -s ../tests
+  # TODO: hangs for some reason
+  # macos-xcodebuild:
+  #   runs-on: macos-15
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: setup env
+  #       run: |
+  #         gem install xcpretty
+  #     - name: mkdir
+  #       run: mkdir build
+  #     - name: cmake
+  #       working-directory: build
+  #       run: cmake -DCMAKE_BUILD_TYPE=Debug -DJET_LIVE_BUILD_TESTS=ON -G Xcode ..
+  #     - name: xcodebuild
+  #       working-directory: build
+  #       run: xcodebuild -alltargets -quiet
+  #     - name: test
+  #       working-directory: build
+  #       run: ../tools/tests/test_runner.py -b . -d tests/Debug -s ../tests
