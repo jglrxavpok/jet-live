@@ -66,7 +66,6 @@ namespace jet
             }
 
             auto relocAddressPtr = reinterpret_cast<void*>(relocAddress);
-            }
             if (reloc.size == sizeof(int32_t)) {
                 int32_t buf = *reinterpret_cast<int32_t*>(relocAddressPtr) +
                     static_cast<int32_t>(oldVar->runtimeAddress) - static_cast<int32_t>(relocSymbol->runtimeAddress);
