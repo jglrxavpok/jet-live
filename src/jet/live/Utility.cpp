@@ -183,7 +183,7 @@ namespace jet
                     .append(" -Wl,-install_name,")
                     .append(libName)
                     .append(" -Wl,-flat_namespace")
-                    .append(" -undefined dynamic_lookup")
+                    .append(" -Wl,-undefined,dynamic_lookup")
 #ifdef __APPLE__
                     .append(" -isysroot " JET_LIVE_OSX_SYSROOT)
 #endif
