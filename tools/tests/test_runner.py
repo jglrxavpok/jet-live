@@ -98,8 +98,7 @@ buildDir = os.path.realpath(os.path.expanduser(args.build_directory))
 print("RUNNER: source dir: ", sourceDir)
 print("RUNNER: build dir: ", buildDir)
 
-testCmd = [os.path.join(args.binary_directory, "tests"),
-           "--rng-seed=0"]
+testCmd = [os.path.join(args.binary_directory, "tests")]
 print("RUNNER: Running '" + " ".join(testCmd) + "'")
 proc = subprocess.Popen(testCmd,
                         stdout=subprocess.PIPE,
