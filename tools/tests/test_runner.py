@@ -78,6 +78,10 @@ def processCommand(cmdStr):
         subprocess.Popen(cmd, cwd=buildDir, shell=True).wait()
 
 
+def reverseCommand(cmdStr):
+    return cmdStr.replace("enable", "enable_new").replace("disable", "enable").replace("enable_new", "disable")
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument('-b', '--build_directory',
                     help="Path to the build directory",
@@ -91,21 +95,28 @@ parser.add_argument('-s', '--source_directory',
 args = parser.parse_args()
 sourceDir = os.path.realpath(os.path.expanduser(args.source_directory))
 buildDir = os.path.realpath(os.path.expanduser(args.build_directory))
+print("RUNNER: source dir: ", sourceDir)
+print("RUNNER: build dir: ", buildDir)
 
 testCmd = [os.path.join(args.binary_directory, "tests"),
-           ""]
+           "--rng-seed=0"]
 print("RUNNER: Running '" + " ".join(testCmd) + "'")
 proc = subprocess.Popen(testCmd,
                         stdout=subprocess.PIPE,
                         universal_newlines=True)
 
+revertCommands = []
 while proc.poll() is None:
     output = proc.stdout.readline()
     if output:
         output = output.strip()
         if output.startswith('JET_TEST: '):
             processCommand(output)
+            revertCommands.append(reverseCommand(output))
         else:
             print(output)
+
+for cmdStr in revertCommands.reverse():
+    processCommand(cmdStr)
 
 exit(proc.poll())
