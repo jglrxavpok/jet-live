@@ -107,7 +107,7 @@ target_sources(tests
   src/good/ReloadOnSignal_test.cpp
   src/good/ModifyFileDuringReload_test.cpp
   src/good/NewCompilationUnit_test.cpp
-  src/good/NewHeaderDependency_test.cpp # fail (macos, linux)
+  src/good/NewHeaderDependency_test.cpp
   src/good/UndefinedSymbolDeep_test.cpp
   src/good/MultipleDefinitions_test.cpp
   src/good/FailedCompilationCrash_test.cpp
@@ -116,7 +116,7 @@ target_sources(tests
   src/good/OneFrameCompileReload_test.cpp # fail (macos)
   src/good/MacosFunctionOutOfScope_test.cpp
 
-  src/bad/LambdaFunctionWithCapturesBadCase2_test.cpp # fail (linux)
+  src/bad/LambdaFunctionWithCapturesBadCase2_test.cpp
   src/bad/LambdaFunctionWithCapturesBadCase_test.cpp
   )
 target_include_directories(tests

@@ -102,10 +102,4 @@ namespace jet
      * Shortcut to find total number of variables symbols in `symbols`.
      */
     size_t getTotalVariables(const Symbols& symbols);
-
-    /**
-     * Sets READ, WRITE and EXEC flags to the memory pages which contains data
-     * pointed by `address` of the given size.
-     */
-    void* unprotect(void* address, size_t size);
 }
