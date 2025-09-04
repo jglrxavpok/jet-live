@@ -102,6 +102,8 @@ namespace jet
 
         uint8_t size = 0; /** Size of relocation entry, in bytes (4, 8). */
 
+        uint32_t type = 0;
+
         void apply(const LiveContext* context); /** Applies relocation. */
     };
 

@@ -33,6 +33,8 @@ namespace jet
                 // Trying to do our best
                 memcpy(newVarPtr, oldVarPtr, std::min(sym.size, oldVarSize));
                 copiedVars++;
+
+                context->events->addLog(LogSeverity::kDebug, sym.name + " was copied");
             }
         }
 

@@ -11,6 +11,7 @@ if (NOT JET_LIVE_CONFIGURED)
 endif()
 
 ########## lib_dobby
+set(DOBBY_LOGGING_ENABLED OFF)
 add_library(lib_dobby STATIC "")
 target_sources(lib_dobby
   PRIVATE
@@ -93,14 +94,23 @@ target_include_directories(lib_dobby
 target_compile_definitions(lib_dobby
   PRIVATE
   # DOBBY_DEBUG
-  DOBBY_LOGGING_DISABLE
-  # FULL_FLOATING_POINT_REGISTER_PACK
   BUILD_WITH_TRAMPOLINE_ASM
 )
 target_compile_options(lib_dobby
   PRIVATE
   -Wno-attributes
-)
+  )
+if (DOBBY_LOGGING_ENABLED)
+  target_sources(lib_dobby
+    PRIVATE
+    libs/dobby/external/logging/logging.cc
+    )
+else()
+  target_compile_definitions(lib_dobby
+    PRIVATE
+    DOBBY_LOGGING_DISABLE
+    )
+endif()
 enable_language(ASM)
 if (PROCESSOR.AARCH64)
   set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -arch arm64 -x assembler-with-cpp")

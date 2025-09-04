@@ -15,12 +15,10 @@ if (NOT CMAKE_GENERATOR STREQUAL "Xcode")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MD ")
 endif()
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-  # Not all recent versions of clang support this flag.
-  # But looks like clang already aligns functions on the 16 bytes border by default.
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -falign-functions=16 ")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -falign-functions=16 ")
-endif()
+# This is needed to have enough space between starts of each 2 functions for hook trampoline.
+# Small function body can occupy 8 or even 4 bytes, but the trampoline needs more space.
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -falign-functions=16 ")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -falign-functions=16 ")
 
 # -Wl,-export-dynamic   - needed to make dynamic linker happy when the shared lib
 #                         with new code will be loaded into the process' address space.

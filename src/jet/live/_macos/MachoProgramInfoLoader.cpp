@@ -276,6 +276,17 @@ namespace jet
                             addressHashMap[machoSymbol.virtualAddress] = currentHash;
                             hashNameMap[currentHash] = currentFileName;
                             hashAddressStabType[currentHash][machoSymbol.virtualAddress] = MachoSymbolType::kSTSYM;
+
+                            auto found2 = res.variables.find(machoSymbol.name);
+                            if (found2 != res.variables.end()) {
+                                for (auto& found3 : found2->second) {
+                                    if (found3.hash == 0 && found3.runtimeAddress == baseAddress + machoSymbol.virtualAddress) {
+                                        found3.hash = addressHashMap[machoSymbol.virtualAddress];
+                                        found3.checkHash = true;
+                                        break;
+                                    }
+                                }
+                            }
                         }
 
                         if (machoSymbol.type == MachoSymbolType::kSection) {
@@ -300,7 +311,7 @@ namespace jet
 
                         if (::thisExecutableLoadAddress == 0 &&
                             filepath.empty()) {
-                            // Trying to distinguish real address of the executable (macOS 10.15, __JET_TEXT)
+                            // Trying to distinguish real address of the executable
                             ::thisExecutableLoadAddress = sym.runtimeAddress;
                         }
                         if (sym.runtimeAddress >= ::thisExecutableLoadAddress &&
@@ -571,6 +582,7 @@ namespace jet
                                 }
 
                                 Relocation rel;
+                                rel.type = reloc.r_type;
 
                                 switch (reloc.r_length) {
                                     case 2: rel.size = sizeof(uint32_t); break;
@@ -580,19 +592,21 @@ namespace jet
                                             "Unsupported relocation length: " + std::to_string(reloc.r_length));
                                         continue;
                                 }
-
+#ifndef __aarch64__
                                 if (!reloc.r_pcrel) {
                                     context->events->addLog(LogSeverity::kDebug, "reloc.r_pcrel == 0, reloc.r_type == " + relToString(reloc.r_type));
                                     continue;
                                 }
+#endif
 
                                 switch (reloc.r_type) {
 #ifdef __aarch64__
-                                    case ARM64_RELOC_UNSIGNED:              // For pointer sized fixups
-                                    case ARM64_RELOC_SUBTRACTOR:            // must be followed by a ARM64_RELOC_UNSIGNED
-                                    case ARM64_RELOC_BRANCH26:              // a BL instruction with pc-relative +-128MB displacement
                                     case ARM64_RELOC_PAGE21:                // pc-rel distance to page of target
                                     case ARM64_RELOC_PAGEOFF12:             // offset within page, scaled by r_length
+                                    case ARM64_RELOC_UNSIGNED:              // For pointer sized fixups
+                                        break;
+                                    case ARM64_RELOC_SUBTRACTOR:            // must be followed by a ARM64_RELOC_UNSIGNED
+                                    case ARM64_RELOC_BRANCH26:              // a BL instruction with pc-relative +-128MB displacement
                                     case ARM64_RELOC_GOT_LOAD_PAGE21:       // load with a pc-rel distance to page of a GOT entry
                                     case ARM64_RELOC_GOT_LOAD_PAGEOFF12:    // load with an offset within page, scaled by r_length, of GOT entry
                                     case ARM64_RELOC_POINTER_TO_GOT:        // 32-bit pc-rel (or 64-bit absolute) offset to a GOT entry
