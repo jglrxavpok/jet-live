@@ -5,17 +5,15 @@
 
 # [jet-live](https://github.com/ddovod/jet-live)
 
-Important: starting from macOS 10.14 the approach used in the library doesn't work anymore, looks like Apple have restricted some of the low level routines. On Linux at least on Ubuntu 20.04 it still works fine.
-
-**jet-live** is a library for c++ "hot code reloading". It works on linux and modern macOS (10.12+ I guess) on 64 bit systems powered by cpu with x86-64 instruction set. Apart from reloading of functions it is able to keep apps' static and global state unchanged after code was reload (please refer to "How it works" for what is it and why it is important).
-Tested on Ubuntu 18.04 with clang 6.0.1/7.0.1, lld-7, gcc 6.4.0/7.3.0, GNU ld 2.30, cmake 3.10.2, ninja 1.8.2, make 4.1 and macOS 10.13.6 with Xcode 8.3.3, cmake 3.8.2, make 3.81.
+**jet-live** is a library for c++ "hot code reloading". It works on modern linux (x86_64) and macOS (arm) systems. Apart from reloading of functions it is able to keep apps static and global state unchanged after code was reload (please refer to "How it works" for what is it and why it is important).
+Please see github actions for more details about supported and tested environments.
 
 **Important:** this library doesn't force you to organize your code in some special way (like in [RCCPP](https://github.com/RuntimeCompiledCPlusPlus/RuntimeCompiledCPlusPlus) or [cr](https://github.com/fungos/cr)), you don't need to separate reloadable code into some shared library, **jet-live** should work with any project in the least intrusive way.
 
 If you need something similar for windows, please try [blink](https://github.com/crosire/blink), I have no plans to support windows.
 
 ### Prerequisites
-You need `c++11` compliant compiler. Also there're several dependencies which are bundled in, most of them are header-only or single h/cpp pair library. Please refer to the `lib` directory for details.
+You need `c++17` compliant compiler. Also there're several dependencies which are bundled in. Please refer to the `lib` directory for details.
 
 ### Getting started
 This library is best suited for projects based on cmake and make or ninja build systems, defaults are fine-tuned for these tools. The CMakeLists.txt will add `set(CMAKE_EXPORT_COMPILE_COMMANDS ON)` option for `compile_commands.json` and alter compiler and linker flags. This is important and not avoidable. For details please see CMakeLists.txt. if you use ninja, add `-d keepdepfile` ninja flag when running ninja, this is needed to track dependencies between source and header files
@@ -44,18 +42,13 @@ Personally I use it like this. I have a `Ctrl+r` shortcut to which `tryReload` i
 
 **jet-live** will monitor for file changes, recompile changed files and only when `tryReload` is called it will wait for all current compilation processes to finish and reload new code. Please don't call `tryReload` on each update, it will not work as you're expecting, call it only when your source code is ready to be reloaded.
 
-If you don't want to switch back and forth between your code editor and app, you can configure a keyboard shortcut which runs a shell command `kill -s USR1 $(pgrep <your_app_name>)`, the library will trigger code reload when `SIGUSR1` signal is received. It works at least in emacs, Xcode, CLion and VSCode, but I'm sure it is achievable in other editors and IDEs, just google it. If your debugger is lldb and it catches this signal and stops the app, add this commands to the `~/.lldbinit` file:
+If you don't want to switch back and forth between your code editor and app, you can configure a keyboard shortcut which runs a shell command `kill -s USR1 $(pgrep <your_app_name>)`, the library will trigger code reload when `SIGUSR1` signal is received. It works at least in emacs, Xcode, CLion and VSCode, but I'm sure if it's achievable in other editors and IDEs, just google it. If your debugger is lldb and it catches this signal and stops the app, add this commands to the `~/.lldbinit` file:
 ```
 breakpoint set --name main
 breakpoint command add
 process handle -n true -p true -s false SIGUSR1
 continue
 DONE
-```
-
-On macOS you can use `cmake -G Xcode` generator apart from make and ninja. In this case please install `xcpretty` gem:
-```
-gem install xcpretty
 ```
 
 ### Example
@@ -74,7 +67,7 @@ There's a not very comprehensive, but constantly updating test suite. To run it:
 git clone https://github.com/ddovod/jet-live.git && cd jet-live
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Debug -DJET_LIVE_BUILD_TESTS=ON .. && make
-../tools/tests/test_runner.py -b . -s ../tests/src/
+../tools/tests/test_runner.py -b . -d tests -s ../tests
 ```
 
 ### Features
@@ -86,7 +79,7 @@ Implemented:
 - Linux and macOS implementation
 - Ability to add new compilations units on the fly (just invoke cmake to recreate `compile_commands.json` file after new .cpp file was created)
 
-Will be implemented:
+Will be implemented (I hope so):
 - Code reload in multithreaded app (right now reloading of code in multithreaded app is not reliable)
 
 Will not be implemented at all:
