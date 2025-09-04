@@ -3,7 +3,9 @@
 #include <cstdint>
 #include <limits>
 #include <dobby.h>
+#ifdef __aarch64__
 #include <mach-o/arm64/reloc.h>
+#endif
 #include "jet/live/DataTypes.hpp"
 #include "jet/live/LiveContext.hpp"
 #include "jet/live/Utility.hpp"
