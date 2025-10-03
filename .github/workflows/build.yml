@@ -6,7 +6,7 @@ env:
   CMAKE_VERSION: 3.29.6
 
 jobs:
-  ubuntu-clang:
+  ubuntu-clang-make:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
         working-directory: build
         run: make
 
-  ubuntu-gcc:
+  ubuntu-gcc-make:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -45,6 +45,46 @@ jobs:
       - name: make
         working-directory: build
         run: make
+
+  ubuntu-clang-ninja:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup env
+        run: |
+          sudo apt-get update
+          sudo apt-get install clang-18 lld-18 ninja-build
+      - name: mkdir
+        run: mkdir build
+      - name: cmake
+        working-directory: build
+        run: cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja ..
+        env:
+          CC: clang-18
+          CXX: clang++-18
+      - name: ninja
+        working-directory: build
+        run: ninja -d keepdepfile
+
+  ubuntu-gcc-ninja:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup env
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-13 ninja-build
+      - name: mkdir
+        run: mkdir build
+      - name: cmake
+        working-directory: build
+        run: cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja ..
+        env:
+          CC: gcc-13
+          CXX: g++-13
+      - name: ninja
+        working-directory: build
+        run: ninja -d keepdepfile
 
   macos-make:
     runs-on: macos-15
