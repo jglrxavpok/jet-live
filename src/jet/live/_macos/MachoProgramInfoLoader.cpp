@@ -3,6 +3,7 @@
 #include <dlfcn.h>
 #include <map>
 #include <set>
+#include <string>
 #include <teenypath.h>
 #include <mach-o/dyld.h>
 #include <mach-o/dyld_images.h>
@@ -33,7 +34,8 @@ namespace
     bool isSystemImage(const std::string& imagePathStr)
     {
         return imagePathStr.find("/usr/lib") != std::string::npos ||
-            imagePathStr.find("/System/Library") != std::string::npos;
+            imagePathStr.find("/System/Library") != std::string::npos ||
+            imagePathStr.find("/opt/homebrew") != std::string::npos;
     }
 }
 
