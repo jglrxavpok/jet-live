@@ -30,8 +30,6 @@
 
 namespace
 {
-    uintptr_t thisExecutableLoadAddress = 0;
-
     bool isSystemImage(const std::string& imagePathStr)
     {
         return imagePathStr.find("/usr/lib") != std::string::npos ||
@@ -309,13 +307,8 @@ namespace jet
                             sym.checkHash = true;
                         }
 
-                        if (::thisExecutableLoadAddress == 0 &&
-                            filepath.empty()) {
-                            // Trying to distinguish real address of the executable
-                            ::thisExecutableLoadAddress = sym.runtimeAddress;
                         }
-                        if (sym.runtimeAddress >= ::thisExecutableLoadAddress &&
-                            context->symbolsFilter->shouldReloadMachoSymbol(machoContext, machoSymbol)) {
+                        if (context->symbolsFilter->shouldReloadMachoSymbol(machoContext, machoSymbol)) {
                             res.functions[sym.name].push_back(sym);
                         }
 
