@@ -307,7 +307,6 @@ namespace jet
                             sym.checkHash = true;
                         }
 
-                        }
                         if (context->symbolsFilter->shouldReloadMachoSymbol(machoContext, machoSymbol)) {
                             res.functions[sym.name].push_back(sym);
                         }
