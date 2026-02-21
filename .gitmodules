@@ -1,0 +1,3 @@
+[submodule "libs/dobby"]
+	path = libs/dobby
+	url = https://github.com/jglrxavpok/Dobby
